@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
+import frc.robot.components.RobotDriveType;
 import frc.robot.components.Swinging;
 
 /**
@@ -27,6 +28,8 @@ public class RobotContainer {
   
   private final XboxController m_controller = new XboxController(0);
 
+  private RobotDriveType currentDriveType = RobotDriveType.FIELD_ORIENTED;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -40,7 +43,8 @@ public class RobotContainer {
             m_drivetrainSubsystem,
             () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+            currentDriveType
     ));
 
 
@@ -60,6 +64,26 @@ public class RobotContainer {
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+        
+    // A button toggles the robot drive type
+    new Button(m_controller::getAButton)
+            .whenPressed(switchDriveType());
+  }
+
+  private void switchDriveType() {
+    if (currentDriveType == RobotDriveType.FIELD_ORIENTED) {
+      currentDriveType = RobotDriveType.ROBOT_ORIENTED;
+    } else {
+      currentDriveType = RobotDriveType.FIELD_ORIENTED;
+    }
+
+    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+            m_drivetrainSubsystem,
+            () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+            currentDriveType
+    ));
   }
 
 
