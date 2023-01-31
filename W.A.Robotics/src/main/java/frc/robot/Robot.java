@@ -7,7 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import frc.robot.components.Swinging;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -18,6 +23,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  
+  private Swinging armSwing;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -28,6 +35,12 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    //TalonFX leftMotor = new TalonFX(1);
+    //this.armSwing = new Swinging(leftMotor);
+
+    XboxController drive = new XboxController(0);
+    Joystick operator = new Joystick(1);
   }
 
   /**
@@ -81,7 +94,18 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    /*if(controller.getAButton()){
+      armSwing.SwingArmForward();
+    }else{
+      armSwing.SwingArmOff();
+    }
+    if(controller.getXButton()){
+      armSwing.SwingArmBackward();
+    }else{
+      armSwing.SwingArmOff();
+    }*/
+    }
 
   @Override
   public void testInit() {
