@@ -11,10 +11,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.components.RobotDriveType;
 import frc.robot.components.Swinging;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -23,10 +27,13 @@ import frc.robot.components.Swinging;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+
   
   private final XboxController m_controller = new XboxController(0);
+  //private final Trigger resetButton = new JoystickButton(m_controller, 8); 
 
   private RobotDriveType currentDriveType = RobotDriveType.FIELD_ORIENTED;
 
@@ -61,6 +68,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Back button zeros the gyroscope
+<<<<<<< Updated upstream
     new Button(m_controller::getBackButton)
             // No requirements because we don't need to interrupt anything
             .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
@@ -84,6 +92,9 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
             currentDriveType
     ));
+=======
+    
+>>>>>>> Stashed changes
   }
 
 

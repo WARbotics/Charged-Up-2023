@@ -10,9 +10,16 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.rmi.registry.RegistryHandler;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import frc.robot.components.Elevator;
 import frc.robot.components.Swinging;
+import frc.robot.components.Intake;;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -21,10 +28,12 @@ import frc.robot.components.Swinging;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
+  private XboxController drive;
+  private Joystick operator;
   private RobotContainer m_robotContainer;
-  
   private Swinging armSwing;
+  private Elevator elevator;
+  private Intake intake;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -35,12 +44,20 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    //Arm
+    TalonFX leftMotor = new TalonFX(1);
+    TalonFX rightMotor = new TalonFX(2);
+    this.armSwing = new Swinging(leftMotor, rightMotor);
 
-    //TalonFX leftMotor = new TalonFX(1);
-    //this.armSwing = new Swinging(leftMotor);
+    CANSparkMax elevatorMotor = new CANSparkMax(21, MotorType.kBrushless);
+    this.elevator = new Elevator(elevatorMotor);
 
-    XboxController drive = new XboxController(0);
-    Joystick operator = new Joystick(1);
+    CANSparkMax intakeMotorRight = new CANSparkMax(22, MotorType.kBrushless);
+    CANSparkMax intakeMotorLeft = new CANSparkMax(23, MotorType.kBrushless);
+    this.intake = new Intake(intakeMotorRight, intakeMotorLeft);
+
+    drive = new XboxController(0);
+    operator = new Joystick(1);
   }
 
   /**
@@ -90,21 +107,57 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    armSwing.zeroPosition();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    /*if(controller.getAButton()){
-      armSwing.SwingArmForward();
+    SmartDashboard.putNumber("Arm Position", armSwing.getPosition());
+    if(operator.getRawButton(7)){
+      armSwing.scoreLowCubeF();
+    }
+    if(operator.getRawButton(8)){
+      armSwing.scoreLowCubeB();
+    }
+    if(operator.getRawButton(9)){
+      armSwing.scoreHighF();
+    }
+    if(operator.getRawButton(10)){
+      armSwing.scoreHighB();
+    } 
+    if(operator.getRawButton(12)){
+      armSwing.runToBasePostion();
+    }
+
+    if(operator.getRawButton(5)){
+      armSwing.runArmF();
+    }else if(operator.getRawButton(3)){
+      armSwing.runArmB();
     }else{
       armSwing.SwingArmOff();
     }
-    if(controller.getXButton()){
-      armSwing.SwingArmBackward();
+
+    SmartDashboard.putNumber("Elevator Position", elevator.getElevatorPosition());
+    if(operator.getRawButton(6)){
+      elevator.elevatorUp();
+    }else if (operator.getRawButton(4)){ //borked
+      elevator.elevatorDown();
     }else{
-      armSwing.SwingArmOff();
-    }*/
+      elevator.elevatorOff();
+    }
+
+    if (operator.getRawButton(1)){ // also borked
+      intake.intakeForward();
+      
+    }else if(operator.getRawButton(2)){
+      intake.intakeBackward();
+    }else if(drive.getAButton()){
+      intake.holdIntake();
+    }else{
+      intake.intakeOff();
+    }
+
     }
 
   @Override
