@@ -75,8 +75,8 @@ public class RobotContainer {
   private void configureButtonBindings() {
     new JoystickButton(m_controller, XboxController.Button.kY.value).onTrue(m_drivetrainSubsystem.zeroGyroCommand());
     new JoystickButton(m_controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, 0.5));
-    new JoystickButton(m_controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, -0.5));
-    new JoystickButton(operator, 5).whileTrue(new IntakeCommand(intake, 0.1));
+    new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value).whileTrue(new IntakeCommand(intake, -0.5));
+    new JoystickButton(operator, 5).whileTrue(new IntakeCommand(intake, -0.1));
     new JoystickButton(operator, 6).whileTrue(new ElevatorCommand(elevator, 0.6));
     new JoystickButton(operator, 4).whileTrue(new ElevatorCommand(elevator, -0.6));
 
