@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import static frc.robot.Constants.*;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.vmx.AHRSJNI;
@@ -167,21 +168,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * Sets the gyroscope angle to zero. This can be used to set the direction the robot is currently facing to the
    * 'forwards' direction.
    */
-  public void zeroGyroscope() {
-    // FIXME Remove if you are using a Pigeon
-    m_pigeon.setYaw(0.0);
+public Command zeroGyroCommand() {
+        return runOnce(this::zeroGyro).withName("ZeroGyroCommand");
+      }
+    
+private void zeroGyro() {
+        m_pigeon.setYaw(0.0);
+      }
 
-    //FIXME Uncomment if you are using a NavX
-  //m_navx.zeroYaw();
-  }
-
-  /*public Pose2d getPose(){
-        return odometer.getPoseMeters();
-  }
-
-  public void resetOdometry(Pose2d pose){
-        odometer.resetPosition(getGyroscopeRotation(), null, pose);
-  }*/
 
   public Rotation2d getGyroscopeRotation() {
     // FIXME Remove if you are using a Pigeon

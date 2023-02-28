@@ -16,10 +16,19 @@ import java.rmi.registry.RegistryHandler;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxRelativeEncoder.Type;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkMaxRelativeEncoder;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Timer;
+
 
 import frc.robot.components.Elevator;
 import frc.robot.components.Swinging;
-import frc.robot.components.Intake;;
+import frc.robot.components.Intake;
+import frc.robot.components.Limelight;;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -28,12 +37,13 @@ import frc.robot.components.Intake;;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private XboxController drive;
-  private Joystick operator;
+  //private XboxController drive;
+  //private Joystick operator;
   private RobotContainer m_robotContainer;
-  private Swinging armSwing;
-  private Elevator elevator;
-  private Intake intake;
+  //private Swinging armSwing;
+  //private Elevator elevator;
+  //private Intake intake;
+  private Limelight limelight;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -44,8 +54,9 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    limelight = new Limelight();
     //Arm
-    TalonFX leftMotor = new TalonFX(1);
+    /*TalonFX leftMotor = new TalonFX(1);
     TalonFX rightMotor = new TalonFX(2);
     this.armSwing = new Swinging(leftMotor, rightMotor);
 
@@ -57,7 +68,7 @@ public class Robot extends TimedRobot {
     this.intake = new Intake(intakeMotorRight, intakeMotorLeft);
 
     drive = new XboxController(0);
-    operator = new Joystick(1);
+    operator = new Joystick(1);*/
   }
 
   /**
@@ -107,13 +118,15 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    armSwing.zeroPosition();
+    
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putNumber("Arm Position", armSwing.getPosition());
+    SmartDashboard.putBoolean("Valid_Target", limelight.hasValidTarget());
+    limelight.LedOn();
+    /*SmartDashboard.putNumber("Arm Position", armSwing.getPosition());
     if(operator.getRawButton(7)){
       armSwing.scoreLowCubeF();
     }
@@ -126,11 +139,24 @@ public class Robot extends TimedRobot {
     if(operator.getRawButton(10)){
       armSwing.scoreHighB();
     } 
+    if(operator.getRawButton(11)){
+      armSwing.scoreLowConeF();
+    }
     if(operator.getRawButton(12)){
+      armSwing.scoreLowConeB();
+    }
+    if(drive.getBButton()){
+      armSwing.groundB();
+    }
+    if(drive.getXButton()){
+      armSwing.groundF();
+    }
+    if(operator.getRawButton(3)){
       armSwing.runToBasePostion();
     }
 
-    if(operator.getRawButton(5)){
+
+    /*if(operator.getRawButton(5)){
       armSwing.runArmF();
     }else if(operator.getRawButton(3)){
       armSwing.runArmB();
@@ -141,22 +167,25 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Elevator Position", elevator.getElevatorPosition());
     if(operator.getRawButton(6)){
       elevator.elevatorUp();
-    }else if (operator.getRawButton(4)){ //borked
+    }else if (operator.getRawButton(4)){
       elevator.elevatorDown();
     }else{
       elevator.elevatorOff();
     }
 
-    if (operator.getRawButton(1)){ // also borked
+    if(operator.getRawButton(2)){
+      elevator.elevatorTest();
+    }
+
+    if (drive.getRightBumper()){ 
       intake.intakeForward();
-      
-    }else if(operator.getRawButton(2)){
+    }else if(drive.getLeftBumper()){
       intake.intakeBackward();
-    }else if(drive.getAButton()){
+    }else if(operator.getRawButton(5)){
       intake.holdIntake();
     }else{
       intake.intakeOff();
-    }
+    }*/
 
     }
 

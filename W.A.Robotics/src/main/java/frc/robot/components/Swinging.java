@@ -12,7 +12,7 @@ public class Swinging extends CommandBase {
     private TalonFX rightMotor;
 
     private double kF = 0;
-    private double kP = .014;
+    private double kP = .008;
     private double kI = 0.0;
     private double kD = 0.04;
 
@@ -99,13 +99,13 @@ public class Swinging extends CommandBase {
     }
 
     public void runArmB(){
-        leftMotor.set(ControlMode.PercentOutput, 0.1);
+        leftMotor.set(ControlMode.PercentOutput, -0.1);
         leftMotor.configVoltageCompSaturation(11);
         leftMotor.enableVoltageCompensation(true);
     }
 
     public void runToBasePostion(){
-        leftMotor.set(ControlMode.PercentOutput, -0.1);
+        leftMotor.set(ControlMode.Position, 0);
         leftMotor.configVoltageCompSaturation(11);
         leftMotor.enableVoltageCompensation(true);
     } 

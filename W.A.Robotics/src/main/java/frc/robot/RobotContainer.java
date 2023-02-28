@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,9 +16,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import frc.robot.components.RobotDriveType;
 import frc.robot.components.Swinging;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ElevatorCommand;
+
+
 
 
 /**
@@ -30,12 +37,12 @@ public class RobotContainer {
   
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
   
   private final XboxController m_controller = new XboxController(0);
-  //private final Trigger resetButton = new JoystickButton(m_controller, 8); 
-
-  private RobotDriveType currentDriveType = RobotDriveType.FIELD_ORIENTED;
+  public final Joystick operator = new Joystick(1); 
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -50,8 +57,7 @@ public class RobotContainer {
             m_drivetrainSubsystem,
             () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-            currentDriveType
+            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
 
@@ -67,34 +73,18 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Back button zeros the gyroscope
-<<<<<<< Updated upstream
-    new Button(m_controller::getBackButton)
-            // No requirements because we don't need to interrupt anything
-            .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
-        
-    // A button toggles the robot drive type
-    new Button(m_controller::getAButton)
-            .whenPressed(switchDriveType());
-  }
+    new JoystickButton(m_controller, XboxController.Button.kY.value).onTrue(m_drivetrainSubsystem.zeroGyroCommand());
+    new JoystickButton(m_controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, 0.5));
+    new JoystickButton(m_controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, -0.5));
+    new JoystickButton(operator, 5).whileTrue(new IntakeCommand(intake, 0.1));
 
-  private void switchDriveType() {
-    if (currentDriveType == RobotDriveType.FIELD_ORIENTED) {
-      currentDriveType = RobotDriveType.ROBOT_ORIENTED;
-    } else {
-      currentDriveType = RobotDriveType.FIELD_ORIENTED;
-    }
-
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-            m_drivetrainSubsystem,
-            () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-            currentDriveType
-    ));
-=======
-    
->>>>>>> Stashed changes
+    //new JoystickButton(operator, 7).onTrue(arm.scoreLowCubeF());
+    //new JoystickButton(operator, 8).onTrue(arm.scoreLowCubeB());
+    //new JoystickButton(operator, 9).onTrue(arm.scoreHighF());
+    //new JoystickButton(operator, 10).onTrue(arm.scoreHighB());
+    //new JoystickButton(operator, 11).onTrue(arm.scoreLowConeF());
+    //new JoystickButton(operator, 12).onTrue(arm.scoreLowConeB());
+    //new JoystickButton(operator, 3).onTrue(arm.runToBasePostion());
   }
 
 
