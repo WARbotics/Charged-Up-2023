@@ -77,6 +77,9 @@ public class RobotContainer {
     new JoystickButton(m_controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, 0.5));
     new JoystickButton(m_controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, -0.5));
     new JoystickButton(operator, 5).whileTrue(new IntakeCommand(intake, 0.1));
+    new JoystickButton(operator, 6).whileTrue(new ElevatorCommand(elevator, 0.6));
+    new JoystickButton(operator, 4).whileTrue(new ElevatorCommand(elevator, -0.6));
+
 
     //new JoystickButton(operator, 7).onTrue(arm.scoreLowCubeF());
     //new JoystickButton(operator, 8).onTrue(arm.scoreLowCubeB());

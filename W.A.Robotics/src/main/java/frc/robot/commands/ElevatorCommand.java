@@ -8,19 +8,24 @@ public class ElevatorCommand extends CommandBase{
     private ElevatorSubsystem elevatorSubsystem;
    
     private double initTime;
+    private double speed;
     
-    public ElevatorCommand(ElevatorSubsystem elevator){
+    public ElevatorCommand(ElevatorSubsystem elevator, double speed){
         elevatorSubsystem = elevator;
+        this.speed = speed;
         initTime = Timer.getFPGATimestamp();
         addRequirements(elevatorSubsystem);
     }
 
     @Override
     public void initialize() {
-        while(Timer.getFPGATimestamp() - initTime <= 20000){
-            elevatorSubsystem.elevatorUp();
-        }
-        }
+    }
+
+    @Override
+    public void execute(){
+        elevatorSubsystem.setMotor(speed);
+
+    }
     
     @Override
     public void end(boolean interrupted){
@@ -29,7 +34,6 @@ public class ElevatorCommand extends CommandBase{
 
     @Override
     public boolean isFinished(){
-        elevatorSubsystem.elevatorOff();
         return false;
     }
 }

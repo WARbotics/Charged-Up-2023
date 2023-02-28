@@ -14,13 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class ElevatorSubsystem extends SubsystemBase{
     private final CANSparkMax elevatorMotor = new CANSparkMax(21, MotorType.kBrushless);
 
-    
-    public void elevatorUp(){
-        elevatorMotor.set(-0.3);
-    }
-
-    public void elevatorDown(){
-        elevatorMotor.set(0.3);
+    public void setMotor(double speed){
+        elevatorMotor.set(speed);
     }
 
     public void elevatorOff(){
