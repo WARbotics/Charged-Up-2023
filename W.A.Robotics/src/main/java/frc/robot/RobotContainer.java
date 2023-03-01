@@ -89,11 +89,11 @@ public class RobotContainer {
     new JoystickButton(operator, 8).onTrue(arm.scoreLowCubeB());
     new JoystickButton(operator, 3).onTrue(arm.scoreHighF());
     new JoystickButton(operator, 5).onTrue(arm.scoreHighB());
-    new JoystickButton(operator, 11).onTrue(arm.scoreLowConeF());
-    new JoystickButton(operator, 12).onTrue(arm.scoreLowConeB());
+    new JoystickButton(operator, 12).onTrue(arm.scoreLowConeF());
+    new JoystickButton(operator, 11).onTrue(arm.scoreLowConeB());
     new JoystickButton(operator, 2).onTrue(arm.runToBasePostion());
-    new JoystickButton(operator, 9).onTrue(arm.groundF());
-    new JoystickButton(operator, 10).onTrue(arm.groundB());
+    new JoystickButton(operator, 10).onTrue(arm.groundF());
+    new JoystickButton(operator, 9).onTrue(arm.groundB());
 
 
   }
