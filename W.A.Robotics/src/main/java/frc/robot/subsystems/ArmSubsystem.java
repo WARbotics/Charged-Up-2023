@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
@@ -29,6 +30,8 @@ public class ArmSubsystem extends SubsystemBase {
         armMotorleft.config_kP(0, kP, 30);
         armMotorleft.config_kI(0, kI, 30);
         armMotorleft.config_kD(0, kD, 30);
+
+        armMotorleft.setSelectedSensorPosition(0);
     }
 
     public CommandBase scoreLowCubeF(){
@@ -40,11 +43,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public CommandBase scoreHighF(){
-        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, 23300));
+        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, 21000));
     }
 
     public CommandBase scoreHighB(){
-        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, -23300));
+        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, -21000));
 
     }
 
@@ -59,12 +62,12 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public CommandBase groundF(){
-        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, 47000));
+        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, 40000));
 
     }
 
     public CommandBase groundB(){
-        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, -47000));
+        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, -40000));
 
     }
 
@@ -95,6 +98,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-   
+        SmartDashboard.putNumber("Arm Position", armMotorleft.getSelectedSensorPosition());
     }
 }

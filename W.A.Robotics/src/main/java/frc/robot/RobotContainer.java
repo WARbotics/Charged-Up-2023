@@ -27,6 +27,7 @@ import frc.robot.commands.ElevatorCommand;
 
 
 
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -39,6 +40,8 @@ public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+  private final ArmSubsystem arm = new ArmSubsystem();
+
 
   
   private final XboxController m_controller = new XboxController(0);
@@ -76,18 +79,23 @@ public class RobotContainer {
     new JoystickButton(m_controller, XboxController.Button.kY.value).onTrue(m_drivetrainSubsystem.zeroGyroCommand());
     new JoystickButton(m_controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, 0.5));
     new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value).whileTrue(new IntakeCommand(intake, -0.5));
-    new JoystickButton(operator, 5).whileTrue(new IntakeCommand(intake, -0.1));
+    new JoystickButton(operator, 1).whileTrue(new IntakeCommand(intake, -0.1));
+    
     new JoystickButton(operator, 6).whileTrue(new ElevatorCommand(elevator, 0.6));
     new JoystickButton(operator, 4).whileTrue(new ElevatorCommand(elevator, -0.6));
 
 
-    //new JoystickButton(operator, 7).onTrue(arm.scoreLowCubeF());
-    //new JoystickButton(operator, 8).onTrue(arm.scoreLowCubeB());
-    //new JoystickButton(operator, 9).onTrue(arm.scoreHighF());
-    //new JoystickButton(operator, 10).onTrue(arm.scoreHighB());
-    //new JoystickButton(operator, 11).onTrue(arm.scoreLowConeF());
-    //new JoystickButton(operator, 12).onTrue(arm.scoreLowConeB());
-    //new JoystickButton(operator, 3).onTrue(arm.runToBasePostion());
+    new JoystickButton(operator, 7).onTrue(arm.scoreLowCubeF());
+    new JoystickButton(operator, 8).onTrue(arm.scoreLowCubeB());
+    new JoystickButton(operator, 3).onTrue(arm.scoreHighF());
+    new JoystickButton(operator, 5).onTrue(arm.scoreHighB());
+    new JoystickButton(operator, 11).onTrue(arm.scoreLowConeF());
+    new JoystickButton(operator, 12).onTrue(arm.scoreLowConeB());
+    new JoystickButton(operator, 2).onTrue(arm.runToBasePostion());
+    new JoystickButton(operator, 9).onTrue(arm.groundF());
+    new JoystickButton(operator, 10).onTrue(arm.groundB());
+
+
   }
 
 
