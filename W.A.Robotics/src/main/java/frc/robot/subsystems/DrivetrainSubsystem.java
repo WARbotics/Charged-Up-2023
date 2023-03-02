@@ -67,7 +67,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
                         Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
 
-        private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+        public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
                         // Front left
                         new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
                         // Front right
@@ -190,6 +190,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 m_pigeon.setYaw(0.0);
         }
 
+        public Pose2d getPose() {
+                return m_odometry.getPoseMeters();
+              }
+        public void resetOdometry(Pose2d pose) {
+                m_odometry.resetPosition( getGyroscopeRotation(), new SwerveModulePosition[] {
+                        this.getPositionFromWheel(m_frontLeftModule),
+                        this.getPositionFromWheel(m_frontRightModule),
+                        this.getPositionFromWheel(m_backLeftModule),
+                        this.getPositionFromWheel(m_backRightModule)
+                },pose);
+              }
+
         public Rotation2d getGyroscopeRotation() {
                 // FIXME Remove if you are using a Pigeon
                 return Rotation2d.fromDegrees(m_pigeon.getYaw());
@@ -212,6 +224,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         private SwerveModulePosition getPositionFromWheel(SwerveModule module) {
                 return new SwerveModulePosition(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
         }
+        public void setModuleStates(SwerveModuleState[] states, boolean isOpenLoop){
+                SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+        }
+        public void setModuleStates(SwerveModuleState[] states) {
+                setModuleStates(states, false);
+              }
+
 
         @Override
         public void periodic() {
