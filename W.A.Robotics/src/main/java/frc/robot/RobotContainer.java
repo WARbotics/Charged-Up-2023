@@ -27,6 +27,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.AutoCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 
 
@@ -44,8 +45,8 @@ public class RobotContainer {
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-  public final AutoCommand auto = new AutoCommand(m_drivetrainSubsystem);
-
+  public final Command auto = new AutoCommand(m_drivetrainSubsystem);
+  private static SendableChooser<Command> autoChooser;
   
   private final XboxController m_controller = new XboxController(0);
   public final Joystick operator = new Joystick(1); 
@@ -65,6 +66,9 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
+
+    autoChooser = new SendableChooser<Command>();
+    autoChooser.addOption("test", auto);
 
 
 
@@ -103,7 +107,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return auto.getSelectedCommand();
+    return autoChooser.getSelected();
   }
 
   private static double deadband(double value, double deadband) {

@@ -12,48 +12,47 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class AutoCommand {
+public class AutoCommand extends SequentialCommandGroup{
     public DrivetrainSubsystem drive;
-    private final SendableChooser<Command> dropDown;
+    private PathPlannerTrajectory traj;
 
     public AutoCommand(DrivetrainSubsystem drive){
         this.drive = drive;
-        dropDown = new SendableChooser<>();
-    dropDown.addOption("Example", run(() -> {
-      getCommand("New Path", true);
-    }));
+        traj = PathPlanner.loadPath("New Path", Constants.MAX_VELOCITY_METERS_PER_SECOND, Constants.MAX_ACCEL_METERS_PER_SECOND_SQUARED);
 
-    SmartDashboard.putData("Auto Selection", dropDown);
-    }
-
-    public Command getSelectedCommand() {
-        return dropDown.getSelected();
-      }
-
-    private Command getCommand(String pathName, boolean isFirstPath){
-        PathPlannerTrajectory traj = PathPlanner.loadPath(
-      pathName,
-      DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-      Constants.MAX_ACCEL_METERS_PER_SECOND_SQUARED);
-
-      return sequence(
-        run(() -> {
-            if (isFirstPath){
-                drive.resetOdometry(traj.getInitialHolonomicPose());
-            }
-        },drive),
+        PPSwerveControllerCommand testPath = 
         new PPSwerveControllerCommand(traj, drive::getPose, drive.m_kinematics, 
-            new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
-            new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
-            new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
-            drive::setModuleStates, 
-            drive)
-        );
-    } 
+                new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
+                new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
+                new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
+                drive::setModuleStates, 
+                drive);
+
+        addCommands(new InstantCommand(() -> drive.resetOdometry(traj.getInitialHolonomicPose())),
+        testPath);
+    };
+
+    /*private Command getCommand(PathPlannerTrajectory traj, boolean isFirstPath){
+        return new SequentialCommandGroup((
+            new InstantCommand(() -> {
+                if (isFirstPath){
+                    drive.resetOdometry(traj.getInitialHolonomicPose());
+                }
+            },drive)),
+            new PPSwerveControllerCommand(traj, drive::getPose, drive.m_kinematics, 
+                new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
+                new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
+                new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
+                drive::setModuleStates, 
+                drive)
+            );
+    } */
 }
