@@ -19,6 +19,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.TimedElevatorCommand;
 import frc.robot.commands.ElevatorCommand;
 
 
@@ -81,7 +82,6 @@ public class RobotContainer {
     new JoystickButton(operator, 6).whileTrue(new ElevatorCommand(elevator, 0.6));
     new JoystickButton(operator, 4).whileTrue(new ElevatorCommand(elevator, -0.6));
 
-
     new JoystickButton(operator, 7).onTrue(arm.scoreLowCubeF());
     new JoystickButton(operator, 8).onTrue(arm.scoreLowCubeB());
     new JoystickButton(operator, 3).onTrue(arm.scoreHighF());
@@ -91,6 +91,10 @@ public class RobotContainer {
     new JoystickButton(operator, 2).onTrue(arm.runToBasePostion());
     new JoystickButton(operator, 10).onTrue(arm.groundF());
     new JoystickButton(operator, 9).onTrue(arm.groundB());
+    new JoystickButton(m_controller, XboxController.Button.kX.value).onTrue(arm.rampForward());
+    new JoystickButton(m_controller, XboxController.Button.kB.value).onTrue(arm.rampBackward());
+
+
 
 
   }

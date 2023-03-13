@@ -35,11 +35,19 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public CommandBase scoreLowCubeF(){
-        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, -25000));
+        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, -23000));
     }
 
     public CommandBase scoreLowCubeB(){
-        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, 25000));
+        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, 23000));
+    }
+
+    public CommandBase rampForward(){
+        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, -21000));
+    }
+
+    public CommandBase rampBackward(){
+        return this.runOnce(() -> armMotorleft.set(ControlMode.Position, 21000));
     }
 
     public CommandBase scoreHighF(){
