@@ -23,7 +23,7 @@ public class TimedElevatorCommand extends CommandBase{
 
     @Override
     public void execute(){
-        while (Timer.getFPGATimestamp() - initTime <= 2000){
+        while (Timer.getFPGATimestamp() - initTime <= 500){
             elevatorSubsystem.setMotor(speed);
     }
 }
