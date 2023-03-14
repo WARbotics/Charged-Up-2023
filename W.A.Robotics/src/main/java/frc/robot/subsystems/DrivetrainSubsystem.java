@@ -194,7 +194,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 return m_odometry.getPoseMeters();
               }
         public void resetOdometry(Pose2d pose) {
-                m_odometry.resetPosition( getGyroscopeRotation(), new SwerveModulePosition[] {
+                m_odometry.resetPosition(getGyroscopeRotation(), new SwerveModulePosition[] {
                         this.getPositionFromWheel(m_frontLeftModule),
                         this.getPositionFromWheel(m_frontRightModule),
                         this.getPositionFromWheel(m_backLeftModule),
@@ -224,12 +224,23 @@ public class DrivetrainSubsystem extends SubsystemBase {
         private SwerveModulePosition getPositionFromWheel(SwerveModule module) {
                 return new SwerveModulePosition(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
         }
-        public void setModuleStates(SwerveModuleState[] states, boolean isOpenLoop){
+        
+        SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
+
+        
+        public void setModuleStates(SwerveModuleState[] states){
                 SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+
+                m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                states[0].angle.getRadians());
+                m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                states[1].angle.getRadians());
+                m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                states[2].angle.getRadians());
+                m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                                states[3].angle.getRadians());
         }
-        public void setModuleStates(SwerveModuleState[] states) {
-                setModuleStates(states, false);
-              }
+        
 
 
         @Override

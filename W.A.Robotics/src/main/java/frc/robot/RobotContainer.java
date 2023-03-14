@@ -28,6 +28,7 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ElevatorCommand;
 import frc.robot.commands.AutoCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 
@@ -69,6 +70,7 @@ public class RobotContainer {
 
     autoChooser = new SendableChooser<Command>();
     autoChooser.addOption("test", auto);
+    SmartDashboard.putData("AutoMode", autoChooser);
 
 
 

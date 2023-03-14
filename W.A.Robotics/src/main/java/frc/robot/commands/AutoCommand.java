@@ -39,20 +39,4 @@ public class AutoCommand extends SequentialCommandGroup{
         addCommands(new InstantCommand(() -> drive.resetOdometry(traj.getInitialHolonomicPose())),
         testPath);
     };
-
-    /*private Command getCommand(PathPlannerTrajectory traj, boolean isFirstPath){
-        return new SequentialCommandGroup((
-            new InstantCommand(() -> {
-                if (isFirstPath){
-                    drive.resetOdometry(traj.getInitialHolonomicPose());
-                }
-            },drive)),
-            new PPSwerveControllerCommand(traj, drive::getPose, drive.m_kinematics, 
-                new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
-                new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
-                new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
-                drive::setModuleStates, 
-                drive)
-            );
-    } */
 }
