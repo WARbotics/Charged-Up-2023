@@ -9,32 +9,37 @@ public class TimedElevatorCommand extends CommandBase{
    
     private double initTime;
     private double speed;
+    private Timer timer;
 
-    public TimedElevatorCommand(ElevatorSubsystem elevator, double speed){
+    public TimedElevatorCommand(ElevatorSubsystem elevator, double speed, Timer timer){
         elevatorSubsystem = elevator;
         this.speed = speed;
-        initTime = Timer.getFPGATimestamp();
+        this.timer = timer;
+        initTime = timer.get();
         addRequirements(elevatorSubsystem);
     }
 
     @Override
     public void initialize() {
+        timer.start();
     }
 
     @Override
     public void execute(){
-        while (Timer.getFPGATimestamp() - initTime <= 500){
+        while (timer.get() - initTime <= 0.5){
             elevatorSubsystem.setMotor(speed);
     }
 }
     
     @Override
     public void end(boolean interrupted){
+        timer.stop();
+        timer.reset();
         elevatorSubsystem.elevatorOff();
     }
 
     @Override
     public boolean isFinished(){
-        return false;
+        return true;
     }
 }

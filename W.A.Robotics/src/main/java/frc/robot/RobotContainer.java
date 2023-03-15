@@ -21,6 +21,10 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.TimedElevatorCommand;
 import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.AutoCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 
 
 
@@ -39,8 +43,10 @@ public class RobotContainer {
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final ArmSubsystem arm = new ArmSubsystem();
-
-
+  private final Timer timer = new Timer();
+  public final Command auto = new AutoCommand(m_drivetrainSubsystem, arm, intake);
+  private static SendableChooser<Command> autoChooser;
+  
   
   private final XboxController m_controller = new XboxController(0);
   public final Joystick operator = new Joystick(1); 
@@ -60,6 +66,10 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
+
+    autoChooser = new SendableChooser<Command>();
+    autoChooser.addOption("test", auto);
+    SmartDashboard.putData("AutoMode", autoChooser);
 
 
 
@@ -81,7 +91,7 @@ public class RobotContainer {
     
     new JoystickButton(operator, 6).whileTrue(new ElevatorCommand(elevator, 0.6));
     new JoystickButton(operator, 4).whileTrue(new ElevatorCommand(elevator, -0.6));
-    new JoystickButton(m_controller, XboxController.Button.kA.value).onTrue(new TimedElevatorCommand(elevator, -0.1));
+    new JoystickButton(m_controller, XboxController.Button.kA.value).onTrue(new TimedElevatorCommand(elevator, -0.1, timer));
 
 
     new JoystickButton(operator, 7).onTrue(arm.scoreLowCubeF());
@@ -109,7 +119,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new InstantCommand();
+    return autoChooser.getSelected();  
   }
 
   private static double deadband(double value, double deadband) {

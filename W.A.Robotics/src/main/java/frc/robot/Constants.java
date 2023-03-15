@@ -48,4 +48,11 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 4; // FIXME Set back right steer encoder ID
     public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(44.121); // FIXME Measure and set back right steer offset
 
+    public static final double MAX_ACCEL_METERS_PER_SECOND_SQUARED = 1.0;
+    public static final double MAX_VELOCITY_METERS_PER_SECOND = 1.0;
+
+    public static final double X_CONTROLLER_KP = 0.0;
+    public static final double Y_CONTROLLER_KP = 0.0;
+    public static final double THETA_CONTROLLER_KP = 0.0;
+
 }

@@ -31,6 +31,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 
+
 public class DrivetrainSubsystem extends SubsystemBase {
   /**
    * The maximum voltage that will be delivered to the drive motors.
@@ -38,6 +39,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
   public static final double MAX_VOLTAGE = 12.0;
+  private final SwerveDriveOdometry m_odometry;
   // FIXME Measure the drivetrain's maximum velocity or calculate the theoretical.
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -61,7 +63,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
   public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
           Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
 
-  private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+  public final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
           // Front left
           new Translation2d(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
           // Front right
@@ -161,6 +163,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
             BACK_RIGHT_MODULE_STEER_ENCODER,
             BACK_RIGHT_MODULE_STEER_OFFSET
     );
+
+    m_odometry = new SwerveDriveOdometry(m_kinematics, this.getGyroscopeRotation(), new SwerveModulePosition[] {
+        this.getPositionFromWheel(m_frontLeftModule),
+        this.getPositionFromWheel(m_frontRightModule),
+        this.getPositionFromWheel(m_backLeftModule),
+        this.getPositionFromWheel(m_backRightModule)
+}, new Pose2d(0.0,0.0, new Rotation2d(0.0)));
   }
 
 
@@ -174,6 +183,18 @@ public Command zeroGyroCommand() {
     
 private void zeroGyro() {
         m_pigeon.setYaw(0.0);
+      }
+
+      public Pose2d getPose() {
+        return m_odometry.getPoseMeters();
+      }
+public void resetOdometry(Pose2d pose) {
+        m_odometry.resetPosition(getGyroscopeRotation(), new SwerveModulePosition[] {
+                this.getPositionFromWheel(m_frontLeftModule),
+                this.getPositionFromWheel(m_frontRightModule),
+                this.getPositionFromWheel(m_backLeftModule),
+                this.getPositionFromWheel(m_backRightModule)
+        },pose);
       }
 
 
@@ -195,17 +216,55 @@ private void zeroGyro() {
     m_chassisSpeeds = chassisSpeeds;
   }
 
+  private SwerveModulePosition getPositionFromWheel(SwerveModule module) {
+        return new SwerveModulePosition(module.getDriveVelocity(), new Rotation2d(module.getSteerAngle()));
+}
+
+SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
+
+
+public void setModuleStates(SwerveModuleState[] states){
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+
+        m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                        states[0].angle.getRadians());
+        m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                        states[1].angle.getRadians());
+        m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                        states[2].angle.getRadians());
+        m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                        states[3].angle.getRadians());
+}
+
   @Override
   public void periodic() {
     
-    SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+        SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-    m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[0].angle.getRadians());
-    m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[1].angle.getRadians());
-    m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[2].angle.getRadians());
-    m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE, states[3].angle.getRadians());
+        m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                        states[0].angle.getRadians());
+        m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                        states[1].angle.getRadians());
+        m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                        states[2].angle.getRadians());
+        m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+                        states[3].angle.getRadians());
 
-    //SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+        m_odometry.update(
+                this.getGyroscopeRotation(),
+                new SwerveModulePosition[] {
+                        this.getPositionFromWheel(m_frontLeftModule),
+                        this.getPositionFromWheel(m_frontRightModule),
+                        this.getPositionFromWheel(m_backLeftModule),
+                        this.getPositionFromWheel(m_backRightModule)
+                }
+        );
+
+        SmartDashboard.putNumber("X", m_odometry.getPoseMeters().getTranslation().getX());
+        SmartDashboard.putNumber("Y", m_odometry.getPoseMeters().getTranslation().getY());
+
+        // SmartDashboard.putString("Robot Location",
+        // getPose().getTranslation().toString()
   }
 }
