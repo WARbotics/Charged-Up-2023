@@ -7,20 +7,20 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ElevatorCommand;
-import frc.robot.commands.AutoCommand;
+import frc.robot.commands.ScoreWithParkingAuto;
+import frc.robot.commands.ScoreAuto;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -36,36 +36,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class RobotContainer {
   
-  // The robot's subsystems and commands are defined here...
-  private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+  //Drivetrain
+  private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
+  
+  //Manipulators
   private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ElevatorSubsystem elevator = new ElevatorSubsystem();
   private final ArmSubsystem arm = new ArmSubsystem();
-  public final Command auto = new AutoCommand(m_drivetrainSubsystem, arm, intake);
+  
+ //Auto
+  public final Command autoWithPark = new ScoreWithParkingAuto(drivetrain, arm, intake);
+  public final Command autoWithOutPark = new ScoreAuto(intake, arm);
+
   private static SendableChooser<Command> autoChooser;
   
   
-  private final XboxController m_controller = new XboxController(0);
+  private final XboxController driver = new XboxController(0);
   public final Joystick operator = new Joystick(1); 
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    // Set up the default command for the drivetrain.
-    // The controls are for field-oriented driving:
-    // Left stick Y axis -> forward and backwards movement
-    // Left stick X axis -> left and right movement
-    // Right stick X axis -> rotation
-    m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-            m_drivetrainSubsystem,
-            () -> -modifyAxis(m_controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
+    drivetrain.setDefaultCommand(new DefaultDriveCommand(
+            drivetrain,
+            () -> -modifyAxis(driver.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(driver.getLeftX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+            () -> -modifyAxis(driver.getRightX()) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND
     ));
 
     autoChooser = new SendableChooser<Command>();
-    autoChooser.addOption("test", auto);
+    autoChooser.addOption("ScoreWithPark", autoWithPark);
+    autoChooser.addOption("Score", autoWithOutPark);
     SmartDashboard.putData("AutoMode", autoChooser);
 
 
@@ -81,15 +83,19 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_controller, XboxController.Button.kY.value).onTrue(m_drivetrainSubsystem.zeroGyroCommand());
-    new JoystickButton(m_controller, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, 0.5));
-    new JoystickButton(m_controller, XboxController.Button.kLeftBumper.value).whileTrue(new IntakeCommand(intake, -0.5));
+    //Zero Gyro
+    new JoystickButton(driver, XboxController.Button.kY.value).onTrue(drivetrain.zeroGyroCommand());
+    
+    //Intake
+    new JoystickButton(driver, XboxController.Button.kRightBumper.value).whileTrue(new IntakeCommand(intake, 0.5));
+    new JoystickButton(driver, XboxController.Button.kLeftBumper.value).whileTrue(new IntakeCommand(intake, -0.5));
     new JoystickButton(operator, 1).whileTrue(new IntakeCommand(intake, -0.1));
     
+   //Elevator
     new JoystickButton(operator, 6).whileTrue(new ElevatorCommand(elevator, 0.6));
     new JoystickButton(operator, 4).whileTrue(new ElevatorCommand(elevator, -0.6));
 
-
+    //Arm Positions
     new JoystickButton(operator, 7).onTrue(arm.scoreLowCubeF());
     new JoystickButton(operator, 8).onTrue(arm.scoreLowCubeB());
     new JoystickButton(operator, 3).onTrue(arm.scoreHighF());
@@ -99,8 +105,8 @@ public class RobotContainer {
     new JoystickButton(operator, 2).onTrue(arm.runToBasePostion());
     new JoystickButton(operator, 10).onTrue(arm.groundF());
     new JoystickButton(operator, 9).onTrue(arm.groundB());
-    new JoystickButton(m_controller, XboxController.Button.kX.value).onTrue(arm.rampForward());
-    new JoystickButton(m_controller, XboxController.Button.kB.value).onTrue(arm.rampBackward());
+    new JoystickButton(driver, XboxController.Button.kX.value).onTrue(arm.rampForward());
+    new JoystickButton(driver, XboxController.Button.kB.value).onTrue(arm.rampBackward());
 
 
 
@@ -114,7 +120,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
     return autoChooser.getSelected();  
   }
 

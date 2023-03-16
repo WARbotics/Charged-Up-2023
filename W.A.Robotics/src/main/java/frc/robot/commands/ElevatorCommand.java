@@ -2,18 +2,15 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ElevatorSubsystem;
-import edu.wpi.first.wpilibj.Timer;
 
 public class ElevatorCommand extends CommandBase{
     private ElevatorSubsystem elevatorSubsystem;
    
-    private double initTime;
     private double speed;
     
     public ElevatorCommand(ElevatorSubsystem elevator, double speed){
         elevatorSubsystem = elevator;
         this.speed = speed;
-        initTime = Timer.getFPGATimestamp();
         addRequirements(elevatorSubsystem);
     }
 

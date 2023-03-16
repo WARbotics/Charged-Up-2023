@@ -3,7 +3,6 @@ package frc.robot.components;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import java.lang.Math;
 
 public class Limelight {
     private NetworkTable table;
