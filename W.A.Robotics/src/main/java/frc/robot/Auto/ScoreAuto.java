@@ -1,5 +1,6 @@
-package frc.robot.commands;
+package frc.robot.Auto;
 
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;

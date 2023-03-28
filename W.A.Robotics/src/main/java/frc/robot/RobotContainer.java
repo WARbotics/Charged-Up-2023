@@ -10,7 +10,12 @@ import edu.wpi.first.wpilibj.XboxController;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
+import frc.robot.Auto.ScoreAuto;
+import frc.robot.Auto.ScoreWithTaxiAuto1;
+import frc.robot.Auto.ScoreWithTaxiAuto3;
+import frc.robot.Auto.ScoreTwoWithBalanceAuto1;
+import frc.robot.Auto.ScoreTwoWithBalanceAuto3;
+import frc.robot.Auto.ScoreWithBalanceAuto;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
@@ -18,9 +23,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ElevatorCommand;
-import frc.robot.commands.ScoreWithParkingAuto;
-import frc.robot.commands.ScoreAuto;
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -45,8 +47,14 @@ public class RobotContainer {
   private final ArmSubsystem arm = new ArmSubsystem();
   
  //Auto
-  public final Command autoWithPark = new ScoreWithParkingAuto(drivetrain, arm, intake);
-  public final Command autoWithOutPark = new ScoreAuto(intake, arm);
+  public final Command scoreWithBalanceAuto = new ScoreWithBalanceAuto(drivetrain, arm, intake);
+  public final Command scoreAuto = new ScoreAuto(intake, arm);
+  public final Command scoreTwoWithBalanceAuto1 = new ScoreTwoWithBalanceAuto1(intake, arm, drivetrain);
+  public final Command scoreTwoWithBalanceAuto3 = new ScoreTwoWithBalanceAuto3(intake, arm, drivetrain);
+  public final Command scoreTwo1 = new ScoreWithTaxiAuto1(intake, arm, drivetrain);
+  public final Command scoreTwo3 = new ScoreWithTaxiAuto3(intake, arm, drivetrain);
+
+
 
   private static SendableChooser<Command> autoChooser;
   
@@ -66,8 +74,16 @@ public class RobotContainer {
     ));
 
     autoChooser = new SendableChooser<Command>();
-    autoChooser.addOption("ScoreWithPark", autoWithPark);
-    autoChooser.addOption("Score", autoWithOutPark);
+    autoChooser.addOption("Score With Balance", scoreWithBalanceAuto);
+    autoChooser.addOption("Score", scoreAuto);
+    autoChooser.addOption("Score Two 1 ", scoreTwo1);
+    autoChooser.addOption("Score Two 3 ", scoreTwo3);
+    autoChooser.addOption("Score Two With Balance 1 ", scoreTwoWithBalanceAuto1);
+    autoChooser.addOption("Score Two With Balance 3 ", scoreTwoWithBalanceAuto3);
+
+
+
+
     SmartDashboard.putData("AutoMode", autoChooser);
 
 

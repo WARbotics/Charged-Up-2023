@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.Auto;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -7,20 +7,19 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.Constants;
+import frc.robot.commands.IntakeCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj.Timer;
 
-public class ScoreWithParkingAuto extends SequentialCommandGroup{
+public class ScoreWithBalanceAuto extends SequentialCommandGroup{
     public DrivetrainSubsystem drive;
     private PathPlannerTrajectory park;
     public IntakeSubsystem intake;
     public ArmSubsystem arm; 
-    public Timer timer;
 
-    public ScoreWithParkingAuto(DrivetrainSubsystem drive, ArmSubsystem arm, IntakeSubsystem intake){
+    public ScoreWithBalanceAuto(DrivetrainSubsystem drive, ArmSubsystem arm, IntakeSubsystem intake){
         this.drive = drive;
         this.arm = arm;
         this.intake = intake;
@@ -36,10 +35,10 @@ public class ScoreWithParkingAuto extends SequentialCommandGroup{
         
         IntakeCommand runIntakeOut = new IntakeCommand(intake, 0.7);
         IntakeCommand runIntakeIn = new IntakeCommand(intake, -0.1);
+        drive.zeroGyroCommand();
 
 
         addCommands(new InstantCommand(() -> drive.resetOdometry(park.getInitialHolonomicPose())),
-        drive.zeroGyroCommand(),
         runIntakeIn.withTimeout(2), 
         arm.scoreLowCubeB(),
          new WaitCommand(1.0),

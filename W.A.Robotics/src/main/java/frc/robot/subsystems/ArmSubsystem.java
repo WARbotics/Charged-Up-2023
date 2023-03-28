@@ -14,7 +14,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final double kF = 0;
     private final double kP = .008;
-    private final double kI = 0.0;
+    private final double kI = 0.00;
     private final double kD = 0.04;
 
     public ArmSubsystem(){
