@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Auto.ScoreAuto;
-import frc.robot.Auto.ScoreWithTaxiAuto1;
-import frc.robot.Auto.ScoreWithTaxiAuto3;
+import frc.robot.Auto.ScoreWithTaxiAutoLeft;
+import frc.robot.Auto.ScoreWithTaxiAutoRight;
 import frc.robot.Auto.ScoreTwoWithBalanceAuto1;
 import frc.robot.Auto.ScoreTwoWithBalanceAuto3;
 import frc.robot.Auto.ScoreWithBalanceAuto;
@@ -51,8 +51,8 @@ public class RobotContainer {
   public final Command scoreAuto = new ScoreAuto(intake, arm);
   public final Command scoreTwoWithBalanceAuto1 = new ScoreTwoWithBalanceAuto1(intake, arm, drivetrain);
   public final Command scoreTwoWithBalanceAuto3 = new ScoreTwoWithBalanceAuto3(intake, arm, drivetrain);
-  public final Command scoreTwo1 = new ScoreWithTaxiAuto1(intake, arm, drivetrain);
-  public final Command scoreTwo3 = new ScoreWithTaxiAuto3(intake, arm, drivetrain);
+  public final Command scoreWithTaxiLeft = new ScoreWithTaxiAutoLeft(intake, arm, drivetrain);
+  public final Command scoreWithTaxiRight = new ScoreWithTaxiAutoRight(intake, arm, drivetrain);
 
 
 
@@ -76,8 +76,8 @@ public class RobotContainer {
     autoChooser = new SendableChooser<Command>();
     autoChooser.addOption("Score With Balance", scoreWithBalanceAuto);
     autoChooser.addOption("Score", scoreAuto);
-    autoChooser.addOption("Score Two 1 ", scoreTwo1);
-    autoChooser.addOption("Score Two 3 ", scoreTwo3);
+    autoChooser.addOption("1.5 Left", scoreWithTaxiLeft);
+    autoChooser.addOption("1.5 Right", scoreWithTaxiRight);
     autoChooser.addOption("Score Two With Balance 1 ", scoreTwoWithBalanceAuto1);
     autoChooser.addOption("Score Two With Balance 3 ", scoreTwoWithBalanceAuto3);
 

@@ -45,6 +45,6 @@ public final class Constants {
 
     public static final double X_CONTROLLER_KP = 0.0;
     public static final double Y_CONTROLLER_KP = 0.0;
-    public static final double THETA_CONTROLLER_KP = 0.0;
+    public static final double THETA_CONTROLLER_KP = 0.9;
 
 }

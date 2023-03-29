@@ -15,20 +15,23 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class ScoreWithTaxiAuto1 extends SequentialCommandGroup{
+public class ScoreWithTaxiAutoLeft extends SequentialCommandGroup{
     public IntakeSubsystem intake;
     public ArmSubsystem arm;
     public DrivetrainSubsystem drive;
     private PathPlannerTrajectory driveBackward;
     private PathPlannerTrajectory driveForward;
+    private PathPlannerTrajectory inchForward;
+    
 
-    public ScoreWithTaxiAuto1(IntakeSubsystem intake, ArmSubsystem arm, DrivetrainSubsystem drive){
+    public ScoreWithTaxiAutoLeft(IntakeSubsystem intake, ArmSubsystem arm, DrivetrainSubsystem drive){
         driveBackward = PathPlanner.loadPath("Drive Backward 1", 1.00, 1.00);
         driveForward = PathPlanner.loadPath("Drive Forward 1", 1.00, 1.00);
+        inchForward = PathPlanner.loadPath("Inch Forward 1", 1.00, 1.00);
 
 
-        PPSwerveControllerCommand driveBackwardCommand = 
-        new PPSwerveControllerCommand(driveBackward, drive::getPose, drive.m_kinematics, 
+        PPSwerveControllerCommand inchForwardCommand = 
+        new PPSwerveControllerCommand(inchForward, drive::getPose, drive.m_kinematics, 
                  new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
                  new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
                 new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
@@ -43,18 +46,23 @@ public class ScoreWithTaxiAuto1 extends SequentialCommandGroup{
                 drive::setModuleStates, 
                 drive);
         
-        IntakeCommand runIntakeOut = new IntakeCommand(intake, 0.7);
+        IntakeCommand runIntakeOut = new IntakeCommand(intake, 1);
         IntakeCommand runIntakeIn = new IntakeCommand(intake, -0.1);
         drive.zeroGyroCommand();        
         
         
         addCommands(
-            runIntakeIn.withTimeout(2),
             arm.scoreLowCubeB(),
             new WaitCommand(1.0),
-            runIntakeOut.withTimeout(2),
+            runIntakeOut.withTimeout(1),
             arm.runToBasePostion(),  
-            driveForwardCommand
+            driveForwardCommand,
+            arm.groundB(),
+            new WaitCommand(1),
+            inchForwardCommand,
+            new WaitCommand(0.5),
+            runIntakeIn.withTimeout(1.5),
+            arm.runToBasePostion()
         );
     }
 }
