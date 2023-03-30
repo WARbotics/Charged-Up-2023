@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class ScoreWithTaxiAutoLeft extends SequentialCommandGroup{
+public class ScoreWithTaxiAutoLeftSlow extends SequentialCommandGroup{
     public IntakeSubsystem intake;
     public ArmSubsystem arm;
     public DrivetrainSubsystem drive;
@@ -24,8 +24,8 @@ public class ScoreWithTaxiAutoLeft extends SequentialCommandGroup{
     private PathPlannerTrajectory inchForward;
     
 
-    public ScoreWithTaxiAutoLeft(IntakeSubsystem intake, ArmSubsystem arm, DrivetrainSubsystem drive){
-        driveBackward = PathPlanner.loadPath("Drive Backward 1", 3.00, 3.00);
+    public ScoreWithTaxiAutoLeftSlow(IntakeSubsystem intake, ArmSubsystem arm, DrivetrainSubsystem drive){
+        driveBackward = PathPlanner.loadPath("Drive Backward 1", 1.00, 1.00);
         driveForward = PathPlanner.loadPath("Drive Forward 1", 1.00, 1.00);
         inchForward = PathPlanner.loadPath("Inch Forward 1", 1.00, 1.00);
 

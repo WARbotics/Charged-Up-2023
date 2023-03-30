@@ -46,7 +46,7 @@ public class ScoreWithTaxiAutoRight extends SequentialCommandGroup{
 
         drive.zeroGyroCommand();
 
-        addCommands(
+        addCommands(new InstantCommand(() -> drive.resetOdometry(driveForward.getInitialHolonomicPose())),
             arm.scoreLowCubeB(),
             new WaitCommand(1.0),
             runIntakeOut.withTimeout(1),

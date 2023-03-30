@@ -10,52 +10,47 @@ import frc.robot.Constants;
 import frc.robot.commands.IntakeCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class ScoreWithTaxiAutoLeft extends SequentialCommandGroup{
+public class ScoreWithTaxiAutoRightSlow extends SequentialCommandGroup{
     public IntakeSubsystem intake;
     public ArmSubsystem arm;
     public DrivetrainSubsystem drive;
-    private PathPlannerTrajectory driveBackward;
     private PathPlannerTrajectory driveForward;
     private PathPlannerTrajectory inchForward;
-    
 
-    public ScoreWithTaxiAutoLeft(IntakeSubsystem intake, ArmSubsystem arm, DrivetrainSubsystem drive){
-        driveBackward = PathPlanner.loadPath("Drive Backward 1", 3.00, 3.00);
-        driveForward = PathPlanner.loadPath("Drive Forward 1", 1.00, 1.00);
-        inchForward = PathPlanner.loadPath("Inch Forward 1", 1.00, 1.00);
 
+    public ScoreWithTaxiAutoRightSlow(IntakeSubsystem intake, ArmSubsystem arm, DrivetrainSubsystem drive){
+        driveForward = PathPlanner.loadPath("Drive Forward 3", 1.00, 1.00);
+        inchForward = PathPlanner.loadPath("Inch Forward", 1.00, 1.00);
 
         PPSwerveControllerCommand inchForwardCommand = 
         new PPSwerveControllerCommand(inchForward, drive::getPose, drive.m_kinematics, 
-                 new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
-                 new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
-                new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
-                    drive::setModuleStates, 
-                drive);
-        
+            new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
+            new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
+            new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
+            drive::setModuleStates, 
+            drive);
+
         PPSwerveControllerCommand driveForwardCommand = 
-        new PPSwerveControllerCommand(driveForward, drive::getPose, drive.m_kinematics, 
-                new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
-                new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
-                new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
-                drive::setModuleStates, 
-                drive);
+            new PPSwerveControllerCommand(driveForward, drive::getPose, drive.m_kinematics, 
+            new PIDController(Constants.X_CONTROLLER_KP, 0, 0), 
+            new PIDController(Constants.Y_CONTROLLER_KP, 0, 0), 
+            new PIDController(Constants.THETA_CONTROLLER_KP, 0, 0), 
+            drive::setModuleStates, 
+            drive);
         
-        IntakeCommand runIntakeOut = new IntakeCommand(intake, 1);
-        IntakeCommand runIntakeIn = new IntakeCommand(intake, -0.1);
-        drive.zeroGyroCommand();        
-        
-        
+        IntakeCommand runIntakeOut = new IntakeCommand(intake, 1.0);                
+        IntakeCommand runIntakeIn = new IntakeCommand(intake, -0.3);
+
+        drive.zeroGyroCommand();
+
         addCommands(new InstantCommand(() -> drive.resetOdometry(driveForward.getInitialHolonomicPose())),
             arm.scoreLowCubeB(),
             new WaitCommand(1.0),
             runIntakeOut.withTimeout(1),
-            arm.runToBasePostion(),  
+            arm.runToBasePostion(),   
             driveForwardCommand,
             arm.groundB(),
             new WaitCommand(1),
@@ -66,3 +61,4 @@ public class ScoreWithTaxiAutoLeft extends SequentialCommandGroup{
         );
     }
 }
+
